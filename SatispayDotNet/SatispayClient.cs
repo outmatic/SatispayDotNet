@@ -1,29 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using SatispayDotNet.Exceptions;
 using SatispayDotNet.Extensions;
 using SatispayDotNet.Handlers;
 using SatispayDotNet.Models;
 
 namespace SatispayDotNet
 {
-    public class SatispayClient : IDisposable
+    public partial class SatispayClient : IDisposable
     {
         private const string ApiUrl = "https://staging.authservices.satispay.com/g_business/";
         private const string SandboxApiUrl = "https://staging.authservices.satispay.com/g_business/";
 
         private readonly HttpClient _httpClient;
 
-        public SatispayClient(string keyId, string privateKey, bool production)
+        public SatispayClient(
+            string keyId,
+            string privateKey,
+            bool production)
         {
             _httpClient = BuildClient(keyId, privateKey, production
                 ? ApiUrl
                 : SandboxApiUrl);
         }
 
-        public static Task<AuthenticationResource> TestAuthenticationAsync(string keyId, string privateKey)
+        public static Task<AuthenticationResource> TestAuthenticationAsync(
+            string keyId,
+            string privateKey,
+            CancellationToken cancellationToken = default)
         {
             var httpClient = BuildClient(keyId, privateKey, SandboxApiUrl);
 
@@ -33,10 +40,13 @@ namespace SatispayDotNet
                     Flow = "MATCH_CODE",
                     AmountUnit = 100,
                     Currency = "EUR"
-                });
+                }, cancellationToken);
         }
 
-        private static HttpClient BuildClient(string keyId, string privateKey, string apiUrl)
+        private static HttpClient BuildClient(
+            string keyId,
+            string privateKey,
+            string apiUrl)
         {
             var requestSigningHandler = new RequestSigningDelegatingHandler(keyId, privateKey);
 
@@ -46,58 +56,37 @@ namespace SatispayDotNet
             };
         }
 
-        #region Consumers
-        public Task<ConsumerResource> GetConsumer(string phoneNumber)
-            => SendRequestAsync<ConsumerResource>(
-                _httpClient, HttpMethod.Get, $"v1/consumers/{phoneNumber}");
-        #endregion
-
-        #region Authorizations
-        public Task<AuthorizationResource> CreateAuthorizationAsync(string reason, string callbackUrl, Dictionary<string, string> metadata)
-            => SendRequestAsync<AuthorizationResource>(
-                _httpClient, HttpMethod.Post, "v1/pre_authorized_payment_tokens", new CreateAuthorizationRequest
-                {
-                    Reason = reason,
-                    CallbackUrl = callbackUrl,
-                    Metadata = metadata
-                });
-
-        public Task<AuthorizationResource> GetAuthorizationAsync(string authorizationId)
-            => SendRequestAsync<AuthorizationResource>(
-                _httpClient, HttpMethod.Get, $"v1/pre_authorized_payment_tokens/{authorizationId}");
-
-        public Task<AuthorizationResource> CancelAuthorizationAsync(string authorizationId)
-            => SendRequestAsync<AuthorizationResource>(
-                _httpClient, HttpMethod.Put, $"v1/pre_authorized_payment_tokens/{authorizationId}", new CancelAuthorizationRequest());
-
-        public Task<AuthorizationResource> AssociateConsumerToAuthorizationAsync(string authorizationId, string consumerId)
-            => SendRequestAsync<AuthorizationResource>(
-                _httpClient, HttpMethod.Put, $"v1/pre_authorized_payment_tokens/{authorizationId}", new AssociateConsumerToAuthorizationRequest
-                {
-                    ConsumerUid = consumerId
-                });
-        #endregion
-
-        #region Payments
-
-        #endregion
-        private static async Task<T> SendRequestAsync<T>(HttpClient httpClient, HttpMethod httpMethod, string requestUri, object body = null)
+        private static async Task<T> SendRequestAsync<T>(
+            HttpClient httpClient,
+            HttpMethod httpMethod,
+            string requestUri,
+            object requestBody,
+            CancellationToken cancellationToken)
         {
             var request = new HttpRequestMessage(httpMethod, requestUri);
-            if (body != null)
-                request.Content = body.ToJsonContent();
+            if (requestBody != null)
+                request.Content = requestBody.ToJsonContent();
 
-            var response = await httpClient.SendAsync(request);
-            if (!response.IsSuccessStatusCode)
-                // todo throw correct exception
-                throw new Exception();
+            var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            await ThrowErrorIfAnyAsync(response);
 
-            var json = await response.Content.ReadAsStringAsync();
+            var responseBody = await response.Content.ReadAsStringAsync();
 
-            if (json.Length == 0)
-                return default;
+            return responseBody?.Length > 0
+                ? JsonSerializer.Deserialize<T>(responseBody)
+                : default;
+        }
 
-            return JsonSerializer.Deserialize<T>(json);
+        private static async Task ThrowErrorIfAnyAsync(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+                return;
+
+            var body = await response.Content.ReadAsStringAsync();
+            var error = JsonSerializer.Deserialize<SatispayError>(body);
+
+            if (error != null)
+                throw new SatispayRequestException(response.StatusCode, error.Code, error.Message);
         }
 
         public void Dispose() => _httpClient?.Dispose();

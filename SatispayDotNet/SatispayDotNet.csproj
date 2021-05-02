@@ -11,5 +11,6 @@
     <Folder Include="Handlers\" />
     <Folder Include="Models\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

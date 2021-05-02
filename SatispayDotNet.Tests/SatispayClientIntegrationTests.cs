@@ -9,14 +9,13 @@ namespace SatispayDotNet.Tests
         private readonly SatispayClient _sut;
 
         public SatispayClientIntegrationTests()
-        {
-            _sut = new SatispayClient(Samples.KeyId, Samples.PrivateKey, false);
-        }
+            => _sut = new SatispayClient(Samples.KeyId, Samples.PrivateKey, false);
 
         [Test]
         public async Task SatispayClient_PerformsAuthentication()
         {
             var authentication = await SatispayClient.TestAuthenticationAsync(Samples.KeyId, Samples.PrivateKey);
+
             Assert.IsNotNull(authentication);
             Assert.IsTrue(authentication.Signature.Valid);
         }
@@ -32,13 +31,13 @@ namespace SatispayDotNet.Tests
                 { "key2", "value2" },
             };
 
-            var response = await _sut.CreateAuthorizationAsync(reason, callbackUrl, metadata);
+            var authorization = await _sut.CreateAuthorizationAsync(reason, callbackUrl, metadata);
 
-            Assert.IsNotEmpty(response.Id);
-            Assert.IsNotEmpty(response.CodeIdentifier);
-            Assert.AreEqual(reason, response.Reason);
-            Assert.AreEqual(callbackUrl, response.CallbackUrl);
-            Assert.AreEqual(metadata.Count, response.Metadata.Count);
+            Assert.IsNotEmpty(authorization.Id);
+            Assert.IsNotEmpty(authorization.CodeIdentifier);
+            Assert.AreEqual(reason, authorization.Reason);
+            Assert.AreEqual(callbackUrl, authorization.CallbackUrl);
+            Assert.AreEqual(metadata.Count, authorization.Metadata.Count);
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace SatispayDotNet.Tests
+﻿using System.Text.Json.Serialization;
+
+namespace SatispayDotNet.Tests
 {
-    public partial class Samples
+    public class Samples
     {
         public const string KeyId = @"h4mt066hlj3li09qjkcfa536pl76f1ei2fk4i11llen5imjcqs9c7kjph2et16icts3jef2e6b3qqhvnl46tqjprt7ppvgp47etrcqm1i9kfnfogse8mttb8hf3dd8dgmt94hccc2cjqekv7nse1jl63q6hhc2e2r7lj5fmb2n0bv9eok68v2fmuvfr7cg07bjo03d5t";
         public const string PrivateKey = @"MIIJKQIBAAKCAgEAyLq/0HU45IjfWstBVZ9GfDl/kdFCuwvZwTk3i2Tlj8UfkcMw
@@ -55,5 +57,15 @@
 
         public const string ExpectedDigest = @"SHA-256=ZML76UQPYzw5yDTmhySnU1S8nmqGde/jhqOG5rpfVSI=";
         public static string ExpectedSignature = $@"keyId=""{KeyId}"", algorithm=""rsa-sha256"", headers=""(request-target) host date digest"", signature=""Mp9auLbCVnAB+DhBeQwTp0Cvi3WvHNq1KHZWX7BOQ8NMz3wnOVjYyZ16vA/yz1duyDX9eZ2Y0OkQLaoFT/ioeRoUT2bHVMJOjS9dXr5xVWvL3vWMjgAmRvdQp5MCALrIb3cyOHLli+w+qYetPFVDR3PCTjbNHHnYeJkkCjp2RRx+PeT3ePTPzs1VHoOnPB0NNkj4KUGLHKq4P5bfSBk5Ci9XPnGAyjhldq+F0n9Ve0SWWcHUqT7kmX4HJPJd7HmAUkdpwLi0zQG5dvZaVYChKdH2YlztZK/oVibKGOx6SelyytDdoXXAbtGeW2kD/LDVMqQ/kKvOblcI8PiLQrn2TXPnnLtgasb/B6aJ1PRbeuv3TvW6AWteVfbySfc7C0iRd6vw3Voz6DMAGqcI6Jjb0xJCODkQF90O50IKV/1N4jBb48+cc8g4Ae/YFgGJGmHI0DiDGPQamXEho3UgZJTrghRRQ/y6AXyY0pGasOG+xvP+nZmIxWxyTaXG/mU6ytWfM8I2EAGP3/rQ4nrktdkylyprmnNMXHsppd46BK8oyihaGAKtA6U7wlZ0lojoaDt24vvlw5dn8sJy2CCOwvhRBeuC4Qir+3TJ4aJgzIqD+S/MFH6qo6BFUN5pC6mbncyCpHwiu10OVkSTeJM1UzXQ1llPWlXVhqEcwQal+bTIGw8=""";
+
+        public class SampleRequest
+        {
+            [JsonPropertyName("flow")]
+            public string Flow { get; set; }
+            [JsonPropertyName("amount_unit")]
+            public int AmountUnit { get; set; }
+            [JsonPropertyName("currency")]
+            public string Currency { get; set; }
+        }
     }
 }

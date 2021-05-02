@@ -20,10 +20,4 @@ namespace SatispayDotNet.Models
         [JsonPropertyName("metadata")]
         public Dictionary<string, string> Metadata { get; set; }
     }
-
-    public class ConsumerResource
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-    }
 }

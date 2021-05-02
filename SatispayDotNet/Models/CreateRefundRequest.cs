@@ -2,13 +2,15 @@
 
 namespace SatispayDotNet.Models
 {
-    internal class TestSignatureRequest
+    internal class CreateRefundRequest
     {
         [JsonPropertyName("flow")]
-        public string Flow { get; set; }
+        public string Flow => "REFUND";
         [JsonPropertyName("amount_unit")]
         public int AmountUnit { get; set; }
+        [JsonPropertyName("parent_payment_uid")]
+        public string ParentPaymentUid { get; set; }
         [JsonPropertyName("currency")]
-        public string Currency { get; set; }
+        public Currency Currency { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace SatispayDotNet.Models
 {
-    public class CancelAuthorizationRequest
+    internal class CancelAuthorizationRequest
     {
         [JsonPropertyName("status")]
         public string Status => "CANCELED";

@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using SatispayDotNet.Extensions;
 using SatispayDotNet.Handlers;
-using SatispayDotNet.Models;
 
 namespace SatispayDotNet.Tests
 {
@@ -15,7 +15,7 @@ namespace SatispayDotNet.Tests
 
         public RequestSigningDelegatingHandlerTests()
         {
-            var handler = new RequestSigningDelegatingHandler(Samples.KeyId, Samples.PrivateKey, new FakeDelegatingHandler());
+            var handler = new RequestSigningDelegatingHandler(Samples.KeyId, Samples.PrivateKey, new FakeDelegatingHandler(HttpStatusCode.OK));
 
             _sut = new HttpClient(handler)
             {
@@ -26,7 +26,7 @@ namespace SatispayDotNet.Tests
         [Test]
         public async Task RequestSigningDelegatingHandler_AddHeadersWithCorrectDigestAndSignature()
         {
-            var body = new TestSignatureRequest
+            var body = new Samples.SampleRequest
             {
                 Flow = "MATCH_CODE",
                 AmountUnit = 100,

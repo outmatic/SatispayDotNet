@@ -14,21 +14,27 @@ namespace SatispayDotNet.Handlers
         private readonly string _keyId;
         private readonly string _privateKey;
 
-        public RequestSigningDelegatingHandler(string keyId, string privateKey, HttpMessageHandler innerHandler)
-            : base(innerHandler)
+        public RequestSigningDelegatingHandler(
+            string keyId,
+            string privateKey,
+            HttpMessageHandler innerHandler) : base(innerHandler)
         {
             _keyId = keyId;
             _privateKey = privateKey;
         }
 
-        public RequestSigningDelegatingHandler(string keyId, string privateKey)
+        public RequestSigningDelegatingHandler(
+            string keyId,
+            string privateKey)
         {
             _keyId = keyId;
             _privateKey = privateKey;
             InnerHandler = new HttpClientHandler();
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
             await AddDigestHeaderAsync(request);
 
@@ -49,7 +55,7 @@ namespace SatispayDotNet.Handlers
 
         private void AddAuthorizationHeader(HttpRequestMessage request)
         {
-            var @string = BuildStringToSign(request);         
+            var @string = BuildStringToSign(request);
             var signature = SignData(@string);
 
             var header = $"keyId=\"{_keyId}\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"{Convert.ToBase64String(signature)}\"";
@@ -65,14 +71,11 @@ namespace SatispayDotNet.Handlers
         }
 
         private static string BuildStringToSign(HttpRequestMessage request)
-        {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"(request-target): {request.Method.ToString().ToLowerInvariant()} {request.RequestUri.PathAndQuery}");
-            stringBuilder.AppendLine($"host: {request.RequestUri.Host}");
-            stringBuilder.AppendLine($"date: {request.Headers.Date?.UtcDateTime.ToString("ddd, dd MMM yyyy HH:mm:ss z")}");
-            stringBuilder.Append($"digest: {request.Headers.GetValues("Digest").Single()}");
-
-            return stringBuilder.ToString();
-        }
+            => new StringBuilder()
+                .AppendLine($"(request-target): {request.Method.ToString().ToLowerInvariant()} {request.RequestUri.PathAndQuery}")
+                .AppendLine($"host: {request.RequestUri.Host}")
+                .AppendLine($"date: {request.Headers.Date?.UtcDateTime.ToString("ddd, dd MMM yyyy HH:mm:ss z")}")
+                .Append($"digest: {request.Headers.GetValues("Digest").Single()}")
+                .ToString();
     }
 }
