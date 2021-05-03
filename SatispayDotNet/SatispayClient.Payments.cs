@@ -7,8 +7,8 @@ using SatispayDotNet.Models;
 
 namespace SatispayDotNet
 {
-	public partial class SatispayClient
-	{
+    public partial class SatispayClient
+    {
         public Task<PaymentDetailsResource> CreatePreauthorizedPaymentAsync(
             string preauthorizedPaymentToken,
             int amountUnit,

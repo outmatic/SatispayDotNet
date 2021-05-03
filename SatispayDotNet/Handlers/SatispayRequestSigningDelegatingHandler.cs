@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace SatispayDotNet.Handlers
 {
-    public class RequestSigningDelegatingHandler : DelegatingHandler
+    public class SatispayRequestSigningDelegatingHandler : DelegatingHandler
     {
         private readonly string _keyId;
         private readonly string _privateKey;
 
-        public RequestSigningDelegatingHandler(
+        public SatispayRequestSigningDelegatingHandler(
             string keyId,
             string privateKey,
             HttpMessageHandler innerHandler) : base(innerHandler)
@@ -23,7 +23,7 @@ namespace SatispayDotNet.Handlers
             _privateKey = privateKey;
         }
 
-        public RequestSigningDelegatingHandler(
+        public SatispayRequestSigningDelegatingHandler(
             string keyId,
             string privateKey)
         {
@@ -45,7 +45,9 @@ namespace SatispayDotNet.Handlers
 
         private static async Task AddDigestHeaderAsync(HttpRequestMessage request)
         {
-            var body = await request.Content.ReadAsStringAsync();
+            var body = request.Content != null
+                ? await request.Content.ReadAsStringAsync()
+                : string.Empty;
 
             using var sha256 = SHA256.Create();
             var hashed = sha256.ComputeHash(Encoding.UTF8.GetBytes(body));

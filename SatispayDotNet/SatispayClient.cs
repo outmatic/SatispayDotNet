@@ -48,7 +48,7 @@ namespace SatispayDotNet
             string privateKey,
             string apiUrl)
         {
-            var requestSigningHandler = new RequestSigningDelegatingHandler(keyId, privateKey);
+            var requestSigningHandler = new SatispayRequestSigningDelegatingHandler(keyId, privateKey);
 
             return new HttpClient(requestSigningHandler)
             {

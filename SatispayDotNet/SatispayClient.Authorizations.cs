@@ -6,8 +6,8 @@ using SatispayDotNet.Models;
 
 namespace SatispayDotNet
 {
-	public partial class SatispayClient
-	{
+    public partial class SatispayClient
+    {
         public Task<AuthorizationResource> CreateAuthorizationAsync(
             string reason,
             string callbackUrl,
