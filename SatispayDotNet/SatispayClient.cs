@@ -22,9 +22,15 @@ namespace SatispayDotNet
             string privateKey,
             bool production)
         {
-            _httpClient = BuildClient(keyId, privateKey, production
-                ? ApiUrl
-                : SandboxApiUrl);
+            _httpClient = BuildClient(keyId, privateKey, production);
+        }
+
+        public SatispayClient(
+            HttpClient httpClient,
+            bool production)
+        {
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = BuildUri(production);
         }
 
         public static Task<AuthenticationResource> TestAuthenticationAsync(
@@ -32,7 +38,7 @@ namespace SatispayDotNet
             string privateKey,
             CancellationToken cancellationToken = default)
         {
-            var httpClient = BuildClient(keyId, privateKey, SandboxApiUrl);
+            var httpClient = BuildClient(keyId, privateKey, false);
 
             return SendRequestAsync<AuthenticationResource>(
                 httpClient, HttpMethod.Post, "/wally-services/protocol/tests/signature", new TestSignatureRequest
@@ -46,15 +52,18 @@ namespace SatispayDotNet
         private static HttpClient BuildClient(
             string keyId,
             string privateKey,
-            string apiUrl)
+            bool production)
         {
             var requestSigningHandler = new SatispayRequestSigningDelegatingHandler(keyId, privateKey);
 
             return new HttpClient(requestSigningHandler)
             {
-                BaseAddress = new Uri(apiUrl)
+                BaseAddress = BuildUri(production)
             };
         }
+
+        private static Uri BuildUri(bool production)
+            => new Uri(production ? ApiUrl : SandboxApiUrl);
 
         private static async Task<T> SendRequestAsync<T>(
             HttpClient httpClient,
