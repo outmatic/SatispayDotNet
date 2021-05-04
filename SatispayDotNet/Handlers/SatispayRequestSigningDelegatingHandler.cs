@@ -76,7 +76,7 @@ namespace SatispayDotNet.Handlers
             => new StringBuilder()
                 .AppendLine($"(request-target): {request.Method.ToString().ToLowerInvariant()} {request.RequestUri.PathAndQuery}")
                 .AppendLine($"host: {request.RequestUri.Host}")
-                .AppendLine($"date: {request.Headers.Date?.UtcDateTime.ToString("ddd, dd MMM yyyy HH:mm:ss z")}")
+                .AppendLine($"date: {request.Headers.Date?.UtcDateTime:ddd, dd MMM yyyy HH:mm:ss z}")
                 .Append($"digest: {request.Headers.GetValues("Digest").Single()}")
                 .ToString();
     }
