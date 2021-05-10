@@ -6,9 +6,11 @@
     <PackOnBuild>true</PackOnBuild>
     <Owners>Alessandro Petrelli</Owners>
     <Title>Satispay .NET library</Title>
-    <PackageVersion>0.9.1-rc</PackageVersion>
+    <PackageVersion>0.9.2-rc</PackageVersion>
     <Authors>Alessandro Petrelli</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseUrl>https://github.com/outmatic/SatispayDotNet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/outmatic/SatispayDotNet</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
