@@ -16,7 +16,7 @@ Or you can simply create an instance of the SatispayClient class:
 new SatispayClient(keyId, privateKey, false)
 ```
 To generate the keyId and privateKey, please follow the documentation.
-N.B. If you use .NET Core 3.1 or earlier, you must pass the private key without the header (-----BEGIN RSA PRIVATE KEY-----) and footer (-----END RSA PRIVATE KEY-----). Pay also attention to crlf, which must be included.
+N.B. If you use .NET Core 3.1 or earlier, you must pass the private key without the header (-----BEGIN RSA PRIVATE KEY-----) and footer (-----END RSA PRIVATE KEY-----). Pay also attention to line endings, which must be included.
 
 If you want to check if the keys have been setup correctly, you can test the authentication:
 ```
@@ -31,3 +31,12 @@ public class AuthenticationResource
     public string SignedString { get; set; }
 }
 ```
+## What's implemented (basically what we needed)
+- [x] Authorizations
+- [x] Payments
+- [x] Consumers
+- [ ] Shop Details
+- [ ] Fund Lock
+- [ ] Merchant Reports
+
+We always welcome pull requests!
