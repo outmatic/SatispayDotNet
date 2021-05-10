@@ -25,11 +25,14 @@ namespace SatispayDotNet.Handlers
 
         public SatispayRequestSigningDelegatingHandler(
             string keyId,
-            string privateKey)
+            string privateKey,
+            bool createInnerHandler = false)
         {
             _keyId = keyId;
             _privateKey = privateKey;
-            InnerHandler = new HttpClientHandler();
+
+            if (createInnerHandler)
+                InnerHandler = new HttpClientHandler();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(

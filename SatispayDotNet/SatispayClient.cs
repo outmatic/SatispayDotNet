@@ -54,7 +54,7 @@ namespace SatispayDotNet
             string privateKey,
             bool production)
         {
-            var requestSigningHandler = new SatispayRequestSigningDelegatingHandler(keyId, privateKey);
+            var requestSigningHandler = new SatispayRequestSigningDelegatingHandler(keyId, privateKey, true);
 
             return new HttpClient(requestSigningHandler)
             {

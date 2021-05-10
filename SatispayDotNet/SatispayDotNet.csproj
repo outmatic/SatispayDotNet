@@ -6,8 +6,9 @@
     <PackOnBuild>true</PackOnBuild>
     <Owners>Alessandro Petrelli</Owners>
     <Title>Satispay .NET library</Title>
-    <PackageVersion>0.9.0-beta</PackageVersion>
+    <PackageVersion>0.9.1-rc</PackageVersion>
     <Authors>Alessandro Petrelli</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
