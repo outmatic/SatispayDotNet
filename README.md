@@ -16,6 +16,7 @@ Or you can simply create an instance of the SatispayClient class:
 new SatispayClient(keyId, privateKey, false)
 ```
 To generate the keyId and privateKey, please follow the [documentation](https://developers.satispay.com/reference?showHidden=9ecba#generate-rsa-keys).
+
 N.B. If you use .NET Core 3.1 or earlier, you must pass the private key without the header (-----BEGIN RSA PRIVATE KEY-----) and footer (-----END RSA PRIVATE KEY-----). Pay also attention to line endings, which must be included.
 
 If you want to check if the keys have been setup correctly, you can test the authentication:
