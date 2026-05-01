@@ -39,6 +39,8 @@ namespace SatispayDotNet.Handlers
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+            request.Headers.Add("Date", DateTime.UtcNow.ToString("r"));
+
             await AddDigestHeaderAsync(request);
 
             AddAuthorizationHeader(request);
@@ -79,8 +81,9 @@ namespace SatispayDotNet.Handlers
             => new StringBuilder()
                 .AppendLine($"(request-target): {request.Method.ToString().ToLowerInvariant()} {request.RequestUri.PathAndQuery}")
                 .AppendLine($"host: {request.RequestUri.Host}")
-                .AppendLine($"date: {request.Headers.Date?.UtcDateTime:ddd, dd MMM yyyy HH:mm:ss z}")
+                .AppendLine($"date: {request.Headers.GetValues("Date").Single()}")
                 .Append($"digest: {request.Headers.GetValues("Digest").Single()}")
-                .ToString();
+                .ToString()
+                .Replace("\r\n", "\n");  // Force UNIX line endings because Satispay uses it
     }
 }
